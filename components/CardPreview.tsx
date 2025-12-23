@@ -200,38 +200,38 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
           {/* Card Content */}
           <div className="relative z-10">
             {/* Header */}
-            <div className="text-center mb-6">
+            <div className="text-center mb-4 md:mb-6">
               <div className="inline-block">
-                <h1 className="text-4xl md:text-5xl mb-3" style={{
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-2 md:mb-3" style={{
                   fontFamily: '"Mountains of Christmas", cursive',
                   color: '#FFFFFF',
                   textShadow: '0 0 20px rgba(255,215,0,0.8), 0 0 30px rgba(255,255,255,0.5), 2px 2px 4px rgba(0,0,0,0.5)',
-                  letterSpacing: '3px',
+                  letterSpacing: '2px',
                   fontWeight: 700
                 }}>
                   MERRY CHRISTMAS
                 </h1>
               </div>
-              <div className="w-32 h-px mx-auto my-4" style={{
+              <div className="w-24 sm:w-32 h-px mx-auto my-3 md:my-4" style={{
                 background: 'linear-gradient(90deg, transparent, #FFD700, transparent)'
               }}></div>
             </div>
 
             {/* User Image */}
             {card.image && (
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-4 md:mb-6">
                 <div className="relative inline-block">
                   {/* Image - rectangular format with larger size */}
                   <div className="relative" style={{
                     background: 'linear-gradient(145deg, rgba(255,215,0,0.2), rgba(255,255,255,0.1))',
-                    padding: '10px',
+                    padding: '8px',
                     borderRadius: '12px',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.4), inset 0 2px 8px rgba(255,255,255,0.1)'
                   }}>
                     <img
                       src={card.image}
                       alt={card.name}
-                      className="w-40 h-48 md:w-44 md:h-52 object-cover"
+                      className="w-32 h-40 sm:w-40 sm:h-48 md:w-44 md:h-52 object-cover"
                       style={{
                         borderRadius: '8px',
                         boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
@@ -247,7 +247,7 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
 
                   {/* Name label below image */}
                   <div className="mt-2 text-center">
-                    <p className="text-white text-lg font-bold" style={{
+                    <p className="text-white text-base sm:text-lg font-bold" style={{
                       fontFamily: '"Mountains of Christmas", cursive',
                       textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 10px rgba(255,215,0,0.6)',
                       letterSpacing: '1px'
@@ -260,16 +260,16 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
             )}
 
             {/* Message */}
-            <div className="relative rounded-lg p-5 md:p-6 mb-4" style={{
+            <div className="relative rounded-lg p-4 md:p-5 lg:p-6 mb-3 md:mb-4" style={{
               background: 'rgba(255, 255, 255, 0.08)',
               backdropFilter: 'blur(10px)',
               boxShadow: 'inset 0 0 20px rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.3)',
               border: '1px solid rgba(255,255,255,0.15)'
             }}>
-              <pre className="text-sm md:text-base whitespace-pre-wrap leading-relaxed text-center" style={{
+              <pre className="text-xs sm:text-sm md:text-base whitespace-pre-wrap leading-relaxed text-center" style={{
                 fontFamily: card.gender === 'female' ? '"Satisfy", cursive' : '"Caveat", cursive',
                 fontWeight: card.gender === 'female' ? '400' : '600',
-                fontSize: card.gender === 'female' ? '0.95rem' : '0.9rem',
+                fontSize: card.gender === 'female' ? 'clamp(0.75rem, 2vw, 0.95rem)' : 'clamp(0.7rem, 2vw, 0.9rem)',
                 color: '#FFFFFF',
                 textShadow: '0 2px 8px rgba(0,0,0,0.5)'
               }}>
@@ -293,16 +293,16 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
 
       {/* Action Buttons */}
       {showActions && (
-        <div className="flex flex-wrap gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
           <button
             onClick={downloadCard}
-            className="px-6 py-3 bg-gradient-to-r from-christmas-green to-green-700 hover:from-green-700 hover:to-christmas-green text-white rounded-lg font-christmas text-lg transition-all shadow-lg hover:shadow-xl"
+            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-christmas-green to-green-700 hover:from-green-700 hover:to-christmas-green text-white rounded-lg font-christmas text-base sm:text-lg transition-all shadow-lg hover:shadow-xl"
           >
             📥 Download Card
           </button>
           <button
             onClick={shareCard}
-            className="px-6 py-3 bg-gradient-to-r from-christmas-gold to-yellow-600 hover:from-yellow-600 hover:to-christmas-gold text-white rounded-lg font-christmas text-lg transition-all shadow-lg hover:shadow-xl"
+            className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-christmas-gold to-yellow-600 hover:from-yellow-600 hover:to-christmas-gold text-white rounded-lg font-christmas text-base sm:text-lg transition-all shadow-lg hover:shadow-xl"
           >
             📤 Share Card
           </button>
