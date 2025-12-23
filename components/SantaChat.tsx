@@ -24,11 +24,14 @@ export default function SantaChat({ userCard, onBack }: SantaChatProps) {
     )
   }
 
+  // Extract only the first name
+  const firstName = userCard.name.split(' ')[0]
+
   const greeting = userCard.gender === 'female'
-    ? `Ho Ho Ho! 🎅✨\n\nHello, dear ${userCard.name}! What a beautiful card you've created! I can see the sparkle in your eyes through this magical message.\n\nMay your Christmas be filled with love, joy, and magical moments! 💝🎄`
+    ? `Ho Ho Ho! 🎅✨\n\nHello, dear ${firstName}! What a beautiful card you've created! I can see the sparkle in your eyes through this magical message.\n\nMay your Christmas be filled with love, joy, and magical moments! 💝🎄`
     : userCard.gender === 'male'
-      ? `Ho Ho Ho! 🎅\n\nGreetings, ${userCard.name}! That's an awesome card you made there, young friend!\n\nMay this Christmas bring you amazing adventures and wonderful memories! 🎁⚡`
-      : `Ho Ho Ho! 🎅✨\n\nWelcome, wonderful ${userCard.name}! Your card filled my heart with joy!\n\nMay your holidays be truly magical and filled with happiness! 🎄💫`
+      ? `Ho Ho Ho! 🎅\n\nGreetings, ${firstName}! That's an awesome card you made there, young friend!\n\nMay this Christmas bring you amazing adventures and wonderful memories! 🎁⚡`
+      : `Ho Ho Ho! 🎅✨\n\nWelcome, wonderful ${firstName}! Your card filled my heart with joy!\n\nMay your holidays be truly magical and filled with happiness! 🎄💫`
 
   return (
     <div className="relative min-h-screen p-4 md:p-8 flex items-center justify-center overflow-hidden">
