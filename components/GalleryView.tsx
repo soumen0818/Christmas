@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { cardStorage, ChristmasCard } from '@/utils/storage'
 import CardPreview from './CardPreview'
+import CustomCardPreview from './CustomCardPreview'
 
 interface GalleryViewProps {
   onBack: () => void
@@ -43,7 +44,11 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
             ← Back to Gallery
           </button>
 
-          <CardPreview card={selectedCard} />
+          {selectedCard.isCustom ? (
+            <CustomCardPreview card={selectedCard} />
+          ) : (
+            <CardPreview card={selectedCard} />
+          )}
 
           <div className="mt-4 md:mt-6 flex justify-center">
             <button
