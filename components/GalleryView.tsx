@@ -34,21 +34,21 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
 
   if (selectedCard) {
     return (
-      <div className="min-h-screen p-8">
+      <div className="min-h-screen p-4 md:p-8">
         <div className="max-w-4xl mx-auto">
           <button
             onClick={() => setSelectedCard(null)}
-            className="mb-6 px-6 py-3 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-lg transition-all shadow-lg"
+            className="mb-4 md:mb-6 px-4 sm:px-6 py-2 sm:py-3 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-lg transition-all shadow-lg text-sm sm:text-base"
           >
             ← Back to Gallery
           </button>
 
           <CardPreview card={selectedCard} />
 
-          <div className="mt-6 flex justify-center">
+          <div className="mt-4 md:mt-6 flex justify-center">
             <button
               onClick={() => handleDelete(selectedCard.id)}
-              className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all"
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-sm sm:text-base"
             >
               🗑️ Delete Card
             </button>
@@ -59,7 +59,7 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
   }
 
   return (
-    <div className="relative min-h-screen p-8 overflow-hidden">
+    <div className="relative min-h-screen p-4 md:p-8 overflow-hidden">
 
       {/* Falling snow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -103,12 +103,12 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
       <div className="relative max-w-6xl mx-auto z-10">
         <button
           onClick={onBack}
-          className="mb-6 px-6 py-3 bg-slate-800 bg-opacity-90 hover:bg-opacity-100 rounded-lg transition-all shadow-lg text-white border border-slate-600"
+          className="mb-4 md:mb-6 px-4 sm:px-6 py-2 sm:py-3 bg-slate-800 bg-opacity-90 hover:bg-opacity-100 rounded-lg transition-all shadow-lg text-white border border-slate-600 text-sm sm:text-base"
         >
           ← Back to Home
         </button>
 
-        <div className="relative bg-slate-900 bg-opacity-0 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-slate-700 overflow-hidden">
+        <div className="relative bg-slate-900 bg-opacity-0 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl border border-slate-700 overflow-hidden">
           {/* Christmas tree for gallery container */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-15">
             <img
@@ -167,24 +167,24 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
 
           {/* Content */}
           <div className="relative z-10">
-            <h2 className="text-4xl md:text-5xl font-christmas text-christmas-gold text-center mb-8 glow-text">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-christmas text-christmas-gold text-center mb-6 md:mb-8 glow-text">
               🎄 Your Christmas Collection 🎁
             </h2>
 
             {cards.length === 0 ? (
-              <div className="text-center py-16">
-                <div className="text-6xl mb-4">📭</div>
-                <p className="text-xl text-gray-200 mb-2">No cards yet!</p>
-                <p className="text-gray-400">Create your first magical Christmas card to get started.</p>
+              <div className="text-center py-12 md:py-16">
+                <div className="text-5xl md:text-6xl mb-4">📭</div>
+                <p className="text-lg sm:text-xl text-gray-200 mb-2">No cards yet!</p>
+                <p className="text-sm sm:text-base text-gray-400">Create your first magical Christmas card to get started.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {cards.map((card) => {
                   return (
                     <div
                       key={card.id}
                       onClick={() => handleCardClick(card)}
-                      className="relative bg-slate-900 bg-opacity-95 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer hover:scale-105 border-2 border-christmas-gold overflow-hidden"
+                      className="relative bg-slate-900 bg-opacity-95 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 md:p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer hover:scale-105 border-2 border-christmas-gold overflow-hidden"
                     >
                       {/* Christmas tree for this card */}
                       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-15">
@@ -242,31 +242,31 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
                       </div>
 
                       {card.image && (
-                        <div className="flex justify-center mb-4 relative z-10">
+                        <div className="flex justify-center mb-3 md:mb-4 relative z-10">
                           <img
                             src={card.image}
                             alt={card.name}
-                            className="w-24 h-24 rounded-full object-cover border-4 border-christmas-gold"
+                            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-3 sm:border-4 border-christmas-gold"
                           />
                         </div>
                       )}
 
-                      <h3 className="text-2xl font-christmas text-christmas-gold text-center mb-2 relative z-10">
+                      <h3 className="text-xl sm:text-2xl font-christmas text-christmas-gold text-center mb-2 relative z-10">
                         {card.name}
                       </h3>
 
-                      <div className="text-center text-gray-300 text-sm mb-3 relative z-10">
+                      <div className="text-center text-gray-300 text-xs sm:text-sm mb-2 md:mb-3 relative z-10">
                         {card.gender === 'female' ? '👧' : card.gender === 'male' ? '👦' : '🌟'}
                         <span className="ml-2">
                           {new Date(card.createdAt).toLocaleDateString()}
                         </span>
                       </div>
 
-                      <div className="bg-slate-700 bg-opacity-60 rounded-lg p-3 text-sm text-gray-200 line-clamp-3 relative z-10">
+                      <div className="bg-slate-700 bg-opacity-60 rounded-lg p-2.5 md:p-3 text-xs sm:text-sm text-gray-200 line-clamp-3 relative z-10">
                         {card.message}
                       </div>
 
-                      <div className="mt-4 text-center text-christmas-gold text-sm font-semibold relative z-10">
+                      <div className="mt-3 md:mt-4 text-center text-christmas-gold text-xs sm:text-sm font-semibold relative z-10">
                         Click to view full card ✨
                       </div>
                     </div>
