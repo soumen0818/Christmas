@@ -5,6 +5,8 @@ export interface ChristmasCard {
   image: string
   message: string
   createdAt: number
+  isCustom?: boolean
+  specialNote?: string
 }
 
 export interface SantaGift {
