@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import LoadingPage from '@/components/LoadingPage'
 import SantaVanScene from '@/components/SantaVanScene'
 import CardGenerator from '@/components/CardGenerator'
 import CustomCardGenerator from '@/components/CustomCardGenerator'
@@ -10,17 +11,19 @@ import GalleryView from '@/components/GalleryView'
 export default function Home() {
   const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
   const [userCard, setUserCard] = useState<any>(null)
-  const [showWelcome, setShowWelcome] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [isMusicPlaying, setIsMusicPlaying] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
 
+  // Set loading state only on client side to avoid hydration mismatch
   useEffect(() => {
-    const timer = setTimeout(() => setShowWelcome(false), 2000)
-    return () => clearTimeout(timer)
+    setIsMounted(true)
+    setIsLoading(true)
   }, [])
 
   useEffect(() => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
-    if (audio) {
+    if (audio && !isLoading) {
       // Try to play the audio
       const playPromise = audio.play()
 
@@ -36,7 +39,7 @@ export default function Home() {
           })
       }
     }
-  }, [])
+  }, [isLoading])
 
   const toggleMusic = () => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
@@ -48,6 +51,11 @@ export default function Home() {
       }
       setIsMusicPlaying(!isMusicPlaying)
     }
+  }
+
+  // Show loading page only after component mounts (client-side only)
+  if (!isMounted || isLoading) {
+    return isLoading ? <LoadingPage onLoadComplete={() => setIsLoading(false)} /> : null
   }
 
   return (
@@ -74,18 +82,6 @@ export default function Home() {
       <div className="fixed inset-0 z-0">
         <SantaVanScene />
       </div>
-
-      {/* Welcome Overlay */}
-      {showWelcome && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 transition-opacity px-4">
-          <div className="text-center animate-pulse">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-christmas text-christmas-gold glow-text mb-4">
-              🎄 Marry Christmas 🎄
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-white font-dancing">Loading wonder...</p>
-          </div>
-        </div>
-      )}
 
       {/* Main Content */}
       <div className="relative z-10 min-h-screen">
