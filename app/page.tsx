@@ -3,21 +3,73 @@
 import { useState, useEffect } from 'react'
 import SantaVanScene from '@/components/SantaVanScene'
 import CardGenerator from '@/components/CardGenerator'
+import CustomCardGenerator from '@/components/CustomCardGenerator'
 import SantaChat from '@/components/SantaChat'
 import GalleryView from '@/components/GalleryView'
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState<'home' | 'generator' | 'santa' | 'gallery'>('home')
+  const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
   const [userCard, setUserCard] = useState<any>(null)
   const [showWelcome, setShowWelcome] = useState(true)
+  const [isMusicPlaying, setIsMusicPlaying] = useState(true)
 
   useEffect(() => {
     const timer = setTimeout(() => setShowWelcome(false), 2000)
     return () => clearTimeout(timer)
   }, [])
 
+  useEffect(() => {
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+    if (audio) {
+      // Try to play the audio
+      const playPromise = audio.play()
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Audio started playing successfully
+            setIsMusicPlaying(true)
+          })
+          .catch(() => {
+            // Auto-play was prevented, set to false so user can click to play
+            setIsMusicPlaying(false)
+          })
+      }
+    }
+  }, [])
+
+  const toggleMusic = () => {
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+    if (audio) {
+      if (isMusicPlaying) {
+        audio.pause()
+      } else {
+        audio.play()
+      }
+      setIsMusicPlaying(!isMusicPlaying)
+    }
+  }
+
   return (
     <main className="relative w-full min-h-screen overflow-hidden christmas-bg">
+      {/* Background Music */}
+      <audio id="bg-music" loop autoPlay>
+        <source src="/Dean_Martin.mp3" type="audio/mpeg" />
+      </audio>
+
+      {/* Music Control Button */}
+      <button
+        onClick={toggleMusic}
+        className="fixed top-4 right-4 z-50 bg-christmas-red hover:bg-red-700 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+        aria-label="Toggle music"
+      >
+        {isMusicPlaying ? (
+          <div className="text-2xl">🎅</div>
+        ) : (
+          <div className="text-2xl opacity-50">🎅</div>
+        )}
+      </button>
+
       {/* Three.js Background - Santa's Van Scene */}
       <div className="fixed inset-0 z-0">
         <SantaVanScene />
@@ -51,7 +103,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 max-w-5xl w-full px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 max-w-6xl w-full px-4">
               <button
                 onClick={() => setCurrentView('generator')}
                 className="bg-gradient-to-br from-blue-900 to-blue-950 hover:from-blue-800 hover:to-blue-900 text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-blue-700"
@@ -59,6 +111,15 @@ export default function Home() {
                 <div className="text-4xl sm:text-5xl mb-3 md:mb-4">🎁</div>
                 Create Card
                 <p className="text-xs sm:text-sm font-sans mt-2 opacity-90">Design your magical card</p>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('custom')}
+                className="bg-gradient-to-br from-purple-900 to-purple-950 hover:from-purple-800 hover:to-purple-900 text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-purple-700"
+              >
+                <div className="text-4xl sm:text-5xl mb-3 md:mb-4">💌</div>
+                Custom Card
+                <p className="text-xs sm:text-sm font-sans mt-2 opacity-90">Write your own message</p>
               </button>
 
               <button
@@ -96,6 +157,10 @@ export default function Home() {
               setCurrentView('santa')
             }}
           />
+        )}
+
+        {currentView === 'custom' && (
+          <CustomCardGenerator onBack={() => setCurrentView('home')} />
         )}
 
         {currentView === 'santa' && (
