@@ -239,7 +239,13 @@ export default function Home() {
         )}
 
         {currentView === 'gallery' && (
-          <GalleryView onBack={() => setCurrentView('home')} />
+          <GalleryView
+            onBack={() => setCurrentView('home')}
+            onClaimGift={(card) => {
+              setUserCard(card)
+              setCurrentView('santa')
+            }}
+          />
         )}
       </div>
 

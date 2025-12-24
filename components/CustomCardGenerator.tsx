@@ -100,7 +100,7 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
             id: Date.now().toString(),
             name: firstName,
             gender: 'other',
-            image: imagePreview || '/placeholder-avatar.png',
+            image: imagePreview || '/santa_image.png',
             message: customMessage.trim(),
             createdAt: Date.now(),
             isCustom: true,
@@ -344,8 +344,8 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
                             onClick={generateCard}
                             disabled={!name.trim() || !customMessage.trim()}
                             className={`w-full py-3 sm:py-4 rounded-xl font-christmas text-lg sm:text-xl md:text-2xl transition-all ${name.trim() && customMessage.trim()
-                                    ? 'bg-gradient-to-r from-christmas-red to-red-700 text-white hover:from-red-700 hover:to-christmas-red pulse-glow'
-                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                ? 'bg-gradient-to-r from-christmas-red to-red-700 text-white hover:from-red-700 hover:to-christmas-red pulse-glow'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 }`}
                         >
                             ✨ Generate Custom Card! ✨

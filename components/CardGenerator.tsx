@@ -101,7 +101,7 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
       id: Date.now().toString(),
       name: firstName,
       gender,
-      image: imagePreview || '/placeholder-avatar.png',
+      image: imagePreview || '/santa_image.png',
       message,
       createdAt: Date.now(),
     }
