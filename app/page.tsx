@@ -104,7 +104,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
             <div className="text-center mb-8 sm:mb-10 md:mb-12 float">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-8xl font-christmas text-christmas-gold glow-text mb-3 md:mb-4 px-2">
-                🎅 Marry Christmas 🎄
+                🎅 Merry Christmas 🎄
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white font-dancing mb-2 px-2">
                 Create Your Magical Christmas Card
@@ -182,7 +182,13 @@ export default function Home() {
         )}
 
         {currentView === 'gallery' && (
-          <GalleryView onBack={() => setCurrentView('home')} />
+          <GalleryView
+            onBack={() => setCurrentView('home')}
+            onClaimGift={(card) => {
+              setUserCard(card)
+              setCurrentView('santa')
+            }}
+          />
         )}
       </div>
 

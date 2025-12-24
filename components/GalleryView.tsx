@@ -1,15 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { cardStorage, ChristmasCard } from '@/utils/storage'
+import { cardStorage, giftStorage, ChristmasCard } from '@/utils/storage'
 import CardPreview from './CardPreview'
 import CustomCardPreview from './CustomCardPreview'
 
 interface GalleryViewProps {
   onBack: () => void
+  onClaimGift?: (card: ChristmasCard) => void
 }
 
-export default function GalleryView({ onBack }: GalleryViewProps) {
+export default function GalleryView({ onBack, onClaimGift }: GalleryViewProps) {
   const [cards, setCards] = useState<ChristmasCard[]>([])
   const [selectedCard, setSelectedCard] = useState<ChristmasCard | null>(null)
 
@@ -33,6 +34,16 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
     }
   }
 
+  const handleClaimGift = (card: ChristmasCard) => {
+    if (onClaimGift) {
+      onClaimGift(card)
+    }
+  }
+
+  const hasClaimedGift = (cardId: string) => {
+    return giftStorage.getGiftByCardId(cardId) !== null
+  }
+
   if (selectedCard) {
     return (
       <div className="min-h-screen p-4 md:p-8">
@@ -50,7 +61,18 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
             <CardPreview card={selectedCard} />
           )}
 
-          <div className="mt-4 md:mt-6 flex justify-center">
+          <div className="mt-4 md:mt-6 flex flex-wrap justify-center gap-3">
+            {/* Claim Gift Button - Only for non-custom cards that haven't claimed */}
+            {!selectedCard.isCustom && !hasClaimedGift(selectedCard.id) && (
+              <button
+                onClick={() => handleClaimGift(selectedCard)}
+                className="px-4 sm:px-6 py-2 sm:py-3 bg-christmas-gold hover:bg-yellow-600 text-white rounded-lg transition-all text-sm sm:text-base font-christmas shadow-lg"
+              >
+                🎁 Claim Gift from Santa
+              </button>
+            )}
+
+            {/* Delete Button */}
             <button
               onClick={() => handleDelete(selectedCard.id)}
               className="px-4 sm:px-6 py-2 sm:py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all text-sm sm:text-base"
@@ -246,19 +268,32 @@ export default function GalleryView({ onBack }: GalleryViewProps) {
                         ))}
                       </div>
 
-                      {card.image && (
-                        <div className="flex justify-center mb-3 md:mb-4 relative z-10">
+                      <div className="flex justify-center mb-3 md:mb-4 relative z-10">
+                        <div className="relative">
                           <img
-                            src={card.image}
+                            src={card.image || '/santa_image.png'}
                             alt={card.name}
                             className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-3 sm:border-4 border-christmas-gold"
                           />
+                          {!card.isCustom && hasClaimedGift(card.id) && (
+                            <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full border-2 border-white shadow-lg">
+                              🎁
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
 
                       <h3 className="text-xl sm:text-2xl font-christmas text-christmas-gold text-center mb-2 relative z-10">
                         {card.name}
                       </h3>
+
+                      {!card.isCustom && hasClaimedGift(card.id) && (
+                        <div className="text-center mb-2 relative z-10">
+                          <span className="inline-block bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                            ✅ Gift Received
+                          </span>
+                        </div>
+                      )}
 
                       <div className="text-center text-gray-300 text-xs sm:text-sm mb-2 md:mb-3 relative z-10">
                         {card.gender === 'female' ? '👧' : card.gender === 'male' ? '👦' : '🌟'}

@@ -2,7 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Marry Christmas - Create Your Gift Card',
+  title: 'Merry Christmas - Create Your Gift Card',
   description: 'Create personalized Christmas gift cards and receive magical gifts from Santa',
   icons: {
     icon: '/santa-favicon.svg',
