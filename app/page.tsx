@@ -16,7 +16,6 @@ export default function Home() {
   const songs = ['/Christmas%20Spirit.mp3', '/Dark%20Christmas.mp3', '/We%20Wish%20You.mp3']
   const [currentTrack, setCurrentTrack] = useState(() => songs[Math.floor(Math.random() * songs.length)])
   const [hasInteracted, setHasInteracted] = useState(false)
-  const [lastClickTs, setLastClickTs] = useState(0)
   const [isMounted, setIsMounted] = useState(false)
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
 
@@ -77,25 +76,26 @@ export default function Home() {
   }, [currentTrack, songs])
 
   const handleMusicButton = () => {
-    const now = Date.now()
     const audio = document.getElementById('bg-music') as HTMLAudioElement
+    if (!audio) return
 
-    // Double-click (fast) mutes
-    if (now - lastClickTs < 300) {
-      if (audio) {
-        audio.pause()
-      }
-      setIsMusicPlaying(false)
-      setLastClickTs(0)
+    // Mark interaction on first click
+    if (!hasInteracted) {
+      setHasInteracted(true)
+      // Play random track on first interaction
+      const nextTrack = songs[Math.floor(Math.random() * songs.length)]
+      setCurrentTrack(nextTrack)
       return
     }
 
-    setLastClickTs(now)
-
-    // Single click: start / switch track
-    const nextTrack = songs[Math.floor(Math.random() * songs.length)]
-    setHasInteracted(true)
-    setCurrentTrack(nextTrack)
+    // Toggle play/pause on subsequent clicks
+    if (isMusicPlaying) {
+      audio.pause()
+      setIsMusicPlaying(false)
+    } else {
+      audio.play()
+      setIsMusicPlaying(true)
+    }
   }
 
   // Show loading page only after component mounts (client-side only)
@@ -128,18 +128,6 @@ export default function Home() {
       {/* Background Music */}
       <audio id="bg-music" />
 
-      {/* Music Control Button */}
-      <button
-        onClick={handleMusicButton}
-        className="fixed top-4 right-4 z-50 bg-christmas-red hover:bg-red-700 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
-        aria-label="Play music"
-      >
-        {isMusicPlaying ? (
-          <div className="text-2xl">🎶</div>
-        ) : (
-          <div className="text-2xl opacity-50">🎶</div>
-        )}
-      </button>
 
       {/* Three.js Background - Santa's Van Scene */}
       <div className="fixed inset-0 z-0">
