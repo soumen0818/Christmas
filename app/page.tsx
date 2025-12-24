@@ -9,19 +9,24 @@ import SantaChat from '@/components/SantaChat'
 import GalleryView from '@/components/GalleryView'
 
 export default function Home() {
+  // Playlist - add your music files here
+  const playlist = [
+    '/Christmas%20Spirit.mp3',
+    '/Dark%20Christmas.mp3',
+    '/We%20Wish%20You.mp3',
+  ]
+  const initialTrackIndex = Math.floor(Math.random() * playlist.length)
+
   const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
   const [userCard, setUserCard] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true)
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  const songs = playlist
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(initialTrackIndex)
+  const [currentTrack, setCurrentTrack] = useState(() => playlist[initialTrackIndex])
+  const [hasInteracted, setHasInteracted] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
 
-  // Playlist - add your music files here
-  const playlist = [
-    '/Dean_Martin.mp3',
-    // Add more music files here as you upload them to public folder
-    // Example: '/Jingle_Bells.mp3', '/Silent_Night.mp3'
-  ]
 
   // Set loading state only on client side to avoid hydration mismatch
   useEffect(() => {
@@ -31,33 +36,71 @@ export default function Home() {
 
   useEffect(() => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
-    if (audio && !isLoading) {
-      // Try to play the audio
-      const playPromise = audio.play()
+    if (!audio || isLoading || !hasInteracted) return
 
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            // Audio started playing successfully
-            setIsMusicPlaying(true)
-          })
-          .catch(() => {
-            // Auto-play was prevented, set to false so user can click to play
-            setIsMusicPlaying(false)
-          })
-      }
+    audio.src = currentTrack
+    audio.load()
+
+    const playPromise = audio.play()
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsMusicPlaying(true)
+        })
+        .catch(() => {
+          setIsMusicPlaying(false)
+        })
     }
-  }, [isLoading])
+  }, [currentTrack, hasInteracted, isLoading])
 
-  const toggleMusic = () => {
+  useEffect(() => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
-    if (audio) {
-      if (isMusicPlaying) {
-        audio.pause()
-      } else {
-        audio.play()
-      }
-      setIsMusicPlaying(!isMusicPlaying)
+    if (!audio) return
+
+    const handleEnded = () => {
+      const available = songs.length
+      if (available === 0) return
+      const next = songs.length === 1
+        ? songs[0]
+        : (() => {
+            let pick = songs[Math.floor(Math.random() * songs.length)]
+            while (pick === currentTrack && songs.length > 1) {
+              pick = songs[Math.floor(Math.random() * songs.length)]
+            }
+            return pick
+          })()
+      setCurrentTrack(next)
+      const idx = playlist.indexOf(next)
+      if (idx >= 0) setCurrentTrackIndex(idx)
+    }
+
+    audio.addEventListener('ended', handleEnded)
+    return () => audio.removeEventListener('ended', handleEnded)
+  }, [currentTrack, songs, playlist])
+
+  const handleMusicButton = () => {
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+    if (!audio) return
+
+    // Mark interaction on first click
+    if (!hasInteracted) {
+      setHasInteracted(true)
+      // Play random track on first interaction
+      const nextIndex = Math.floor(Math.random() * playlist.length)
+      const nextTrack = playlist[nextIndex]
+      setCurrentTrackIndex(nextIndex)
+      setCurrentTrack(nextTrack)
+      return
+    }
+
+    // Toggle play/pause on subsequent clicks
+    if (isMusicPlaying) {
+      audio.pause()
+      setIsMusicPlaying(false)
+    } else {
+      audio.play()
+      setIsMusicPlaying(true)
     }
   }
 
@@ -70,6 +113,7 @@ export default function Home() {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
     const newIndex = currentTrackIndex === 0 ? playlist.length - 1 : currentTrackIndex - 1
     setCurrentTrackIndex(newIndex)
+    setCurrentTrack(playlist[newIndex])
     if (audio) {
       audio.src = playlist[newIndex]
       if (isMusicPlaying) audio.play()
@@ -80,6 +124,7 @@ export default function Home() {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
     const newIndex = currentTrackIndex === playlist.length - 1 ? 0 : currentTrackIndex + 1
     setCurrentTrackIndex(newIndex)
+    setCurrentTrack(playlist[newIndex])
     if (audio) {
       audio.src = playlist[newIndex]
       if (isMusicPlaying) audio.play()
@@ -89,13 +134,25 @@ export default function Home() {
   return (
     <main className="relative w-full min-h-screen overflow-hidden christmas-bg">
       {/* Background Music */}
-      <audio id="bg-music" loop autoPlay>
-        <source src={playlist[currentTrackIndex]} type="audio/mpeg" />
-      </audio>
+      <audio id="bg-music" />
+
 
       {/* Three.js Background - Santa's Van Scene */}
       <div className="fixed inset-0 z-0">
         <SantaVanScene />
+      </div>
+
+      {/* Music Player - Top Right */}
+      <div className="fixed top-4 right-4 z-50 flex flex-col items-end">
+        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-full px-3 py-2">
+          <button
+            onClick={handleMusicButton}
+            className="h-12 w-12 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 text-white flex items-center justify-center shadow-xl transition-all hover:scale-110"
+            aria-label="Play or pause music"
+          >
+            {isMusicPlaying ? '🎅' : '🎅'}
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -192,43 +249,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Music Controls - Bottom Center */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2 sm:gap-3 bg-black/40 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-full border border-christmas-gold/30 shadow-2xl">
-        {/* Previous Track - Tree Icon */}
-        <button
-          onClick={previousTrack}
-          className="text-lg sm:text-xl md:text-2xl hover:scale-110 transition-transform"
-          aria-label="Previous track"
-          title="Previous track"
-          style={{ transform: 'rotate(0deg)' }}
-        >
-          <span className="inline-block" style={{ transform: 'rotate(270deg)' }}>🌲</span>
-        </button>
-
-        {/* Play/Pause - Santa Icon */}
-        <button
-          onClick={toggleMusic}
-          className="bg-christmas-red hover:bg-red-700 text-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all hover:scale-110"
-          aria-label="Toggle music"
-        >
-          {isMusicPlaying ? (
-            <div className="text-xl sm:text-2xl">🎅</div>
-          ) : (
-            <div className="text-xl sm:text-2xl opacity-50">🎅</div>
-          )}
-        </button>
-
-        {/* Next Track - Tree Icon */}
-        <button
-          onClick={nextTrack}
-          className="text-lg sm:text-xl md:text-2xl hover:scale-110 transition-transform"
-          aria-label="Next track"
-          title="Next track"
-          style={{ transform: 'rotate(0deg)' }}
-        >
-          <span className="inline-block" style={{ transform: 'rotate(90deg)' }}>🎄</span>
-        </button>
-      </div>
     </main>
   )
 }
