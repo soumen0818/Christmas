@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { ChristmasCard } from '@/utils/storage'
 import html2canvas from 'html2canvas'
 
@@ -11,6 +11,47 @@ interface CardPreviewProps {
 
 export default function CardPreview({ card, showActions = true }: CardPreviewProps) {
   const cardRef = useRef<HTMLDivElement>(null)
+
+  // Precompute decorative particles once to avoid reflow churn during renders
+  const snowFlakes = useMemo(
+    () =>
+      Array.from({ length: 20 }, (_, i) => ({
+        id: `snow-${i}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        fontSize: `${Math.random() * 8 + 4}px`,
+        duration: `${Math.random() * 10 + 10}s`,
+        delay: `${Math.random() * 5}s`,
+      })),
+    []
+  )
+
+  const starBursts = useMemo(
+    () =>
+      Array.from({ length: 14 }, (_, i) => ({
+        id: `star-${i}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 60}%`,
+        fontSize: `${Math.random() * 6 + 4}px`,
+        duration: `${Math.random() * 3 + 2}s`,
+        delay: `${Math.random() * 3}s`,
+        filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))',
+      })),
+    []
+  )
+
+  // Change to "We Wish You" song when entering this page
+  useEffect(() => {
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+    if (audio) {
+      audio.src = '/We%20Wish%20You.mp3'
+      audio.load()
+      // Always play this track when entering preview
+      audio.play().catch(() => {
+
+      })
+    }
+  }, [])
 
   const downloadCard = async () => {
     if (!cardRef.current) return
@@ -68,8 +109,8 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
         ref={cardRef}
         className="relative w-full max-w-xl mx-auto rounded-2xl shadow-2xl overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, #0a1420 0%, #0d1f2d 30%, #091825 60%, #050f1a 100%)',
-          boxShadow: '0 25px 70px rgba(0,0,0,0.8), inset 0 0 80px rgba(0,150,200,0.2)',
+          background: 'linear-gradient(180deg, #1a2d3a 0%, #2c3e50 30%, #1e3a4c 60%, #0f1f2a 100%)',
+          boxShadow: '0 25px 70px rgba(0,0,0,0.8), inset 0 0 80px rgba(196,30,58,0.15)',
         }}
       >
         {/* Christmas tree images - background layer */}
@@ -114,16 +155,16 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
 
         {/* Falling snow effect */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(30)].map((_, i) => (
+          {snowFlakes.map((flake) => (
             <div
-              key={i}
+              key={flake.id}
               className="absolute text-white opacity-60"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                fontSize: `${Math.random() * 8 + 4}px`,
-                animation: `snowfall ${Math.random() * 10 + 10}s linear infinite`,
-                animationDelay: `${Math.random() * 5}s`,
+                left: flake.left,
+                top: flake.top,
+                fontSize: flake.fontSize,
+                animation: `snowfall ${flake.duration} linear infinite`,
+                animationDelay: flake.delay,
               }}
             >
               ❄
@@ -133,17 +174,17 @@ export default function CardPreview({ card, showActions = true }: CardPreviewPro
 
         {/* Twinkling stars background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(25)].map((_, i) => (
+          {starBursts.map((star) => (
             <div
-              key={i}
+              key={star.id}
               className="absolute"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 60}%`,
-                fontSize: `${Math.random() * 6 + 4}px`,
-                animation: `sparkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 3}s`,
-                filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.8))',
+                left: star.left,
+                top: star.top,
+                fontSize: star.fontSize,
+                animation: `sparkle ${star.duration} ease-in-out infinite`,
+                animationDelay: star.delay,
+                filter: star.filter,
               }}
             >
               ✨
