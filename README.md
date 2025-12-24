@@ -2,6 +2,10 @@
 
 A magical Next.js application that lets users create personalized Christmas cards, receive fun virtual gifts from Santa, and spread holiday cheer!
 
+## 🌐 Live Demo
+
+**[🎅 Visit Live Site](https://christmas-merry.vercel.app/)**
+
 ![Christmas Magic](https://img.shields.io/badge/Christmas-Magic-red?style=for-the-badge&logo=christmas)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![Three.js](https://img.shields.io/badge/Three.js-3D-blue?style=for-the-badge&logo=three.js)
