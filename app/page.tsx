@@ -14,6 +14,14 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [isMusicPlaying, setIsMusicPlaying] = useState(true)
   const [isMounted, setIsMounted] = useState(false)
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
+
+  // Playlist - add your music files here
+  const playlist = [
+    '/Dean_Martin.mp3',
+    // Add more music files here as you upload them to public folder
+    // Example: '/Jingle_Bells.mp3', '/Silent_Night.mp3'
+  ]
 
   // Set loading state only on client side to avoid hydration mismatch
   useEffect(() => {
@@ -58,25 +66,32 @@ export default function Home() {
     return isLoading ? <LoadingPage onLoadComplete={() => setIsLoading(false)} /> : null
   }
 
+  const previousTrack = () => {
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+    const newIndex = currentTrackIndex === 0 ? playlist.length - 1 : currentTrackIndex - 1
+    setCurrentTrackIndex(newIndex)
+    if (audio) {
+      audio.src = playlist[newIndex]
+      if (isMusicPlaying) audio.play()
+    }
+  }
+
+  const nextTrack = () => {
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+    const newIndex = currentTrackIndex === playlist.length - 1 ? 0 : currentTrackIndex + 1
+    setCurrentTrackIndex(newIndex)
+    if (audio) {
+      audio.src = playlist[newIndex]
+      if (isMusicPlaying) audio.play()
+    }
+  }
+
   return (
     <main className="relative w-full min-h-screen overflow-hidden christmas-bg">
       {/* Background Music */}
       <audio id="bg-music" loop autoPlay>
-        <source src="/Dean_Martin.mp3" type="audio/mpeg" />
+        <source src={playlist[currentTrackIndex]} type="audio/mpeg" />
       </audio>
-
-      {/* Music Control Button */}
-      <button
-        onClick={toggleMusic}
-        className="fixed top-4 right-4 z-50 bg-christmas-red hover:bg-red-700 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
-        aria-label="Toggle music"
-      >
-        {isMusicPlaying ? (
-          <div className="text-2xl">🎅</div>
-        ) : (
-          <div className="text-2xl opacity-50">🎅</div>
-        )}
-      </button>
 
       {/* Three.js Background - Santa's Van Scene */}
       <div className="fixed inset-0 z-0">
@@ -102,7 +117,7 @@ export default function Home() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 max-w-6xl w-full px-4">
               <button
                 onClick={() => setCurrentView('generator')}
-                className="bg-gradient-to-br from-blue-900 to-blue-950 hover:from-blue-800 hover:to-blue-900 text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-blue-700"
+                className="bg-blue-900/30 hover:bg-blue-800/40 backdrop-blur-sm text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-blue-400/50"
               >
                 <div className="text-4xl sm:text-5xl mb-3 md:mb-4">🎁</div>
                 Create Card
@@ -111,7 +126,7 @@ export default function Home() {
 
               <button
                 onClick={() => setCurrentView('custom')}
-                className="bg-gradient-to-br from-purple-900 to-purple-950 hover:from-purple-800 hover:to-purple-900 text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-purple-700"
+                className="bg-purple-900/30 hover:bg-purple-800/40 backdrop-blur-sm text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-purple-400/50"
               >
                 <div className="text-4xl sm:text-5xl mb-3 md:mb-4">💌</div>
                 Custom Card
@@ -120,7 +135,7 @@ export default function Home() {
 
               <button
                 onClick={() => setCurrentView('santa')}
-                className="bg-gradient-to-br from-slate-800 to-slate-950 hover:from-slate-700 hover:to-slate-800 text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-slate-600"
+                className="bg-slate-800/30 hover:bg-slate-700/40 backdrop-blur-sm text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-slate-400/50"
               >
                 <div className="text-4xl sm:text-5xl mb-3 md:mb-4">🎅</div>
                 Meet Santa
@@ -129,7 +144,7 @@ export default function Home() {
 
               <button
                 onClick={() => setCurrentView('gallery')}
-                className="bg-gradient-to-br from-cyan-900 to-cyan-950 hover:from-cyan-800 hover:to-cyan-900 text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-cyan-700"
+                className="bg-cyan-900/30 hover:bg-cyan-800/40 backdrop-blur-sm text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-cyan-400/50"
               >
                 <div className="text-4xl sm:text-5xl mb-3 md:mb-4">🖼️</div>
                 My Cards
@@ -169,6 +184,44 @@ export default function Home() {
         {currentView === 'gallery' && (
           <GalleryView onBack={() => setCurrentView('home')} />
         )}
+      </div>
+
+      {/* Music Controls - Bottom Center */}
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2 sm:gap-3 bg-black/40 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-full border border-christmas-gold/30 shadow-2xl">
+        {/* Previous Track - Tree Icon */}
+        <button
+          onClick={previousTrack}
+          className="text-lg sm:text-xl md:text-2xl hover:scale-110 transition-transform"
+          aria-label="Previous track"
+          title="Previous track"
+          style={{ transform: 'rotate(0deg)' }}
+        >
+          <span className="inline-block" style={{ transform: 'rotate(270deg)' }}>🌲</span>
+        </button>
+
+        {/* Play/Pause - Santa Icon */}
+        <button
+          onClick={toggleMusic}
+          className="bg-christmas-red hover:bg-red-700 text-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all hover:scale-110"
+          aria-label="Toggle music"
+        >
+          {isMusicPlaying ? (
+            <div className="text-xl sm:text-2xl">🎅</div>
+          ) : (
+            <div className="text-xl sm:text-2xl opacity-50">🎅</div>
+          )}
+        </button>
+
+        {/* Next Track - Tree Icon */}
+        <button
+          onClick={nextTrack}
+          className="text-lg sm:text-xl md:text-2xl hover:scale-110 transition-transform"
+          aria-label="Next track"
+          title="Next track"
+          style={{ transform: 'rotate(0deg)' }}
+        >
+          <span className="inline-block" style={{ transform: 'rotate(90deg)' }}>🎄</span>
+        </button>
       </div>
     </main>
   )
