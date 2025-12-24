@@ -9,22 +9,24 @@ import SantaChat from '@/components/SantaChat'
 import GalleryView from '@/components/GalleryView'
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
-  const [userCard, setUserCard] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
-  const songs = ['/Christmas%20Spirit.mp3', '/Dark%20Christmas.mp3', '/We%20Wish%20You.mp3']
-  const [currentTrack, setCurrentTrack] = useState(() => songs[Math.floor(Math.random() * songs.length)])
-  const [hasInteracted, setHasInteracted] = useState(false)
-  const [isMounted, setIsMounted] = useState(false)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
-
   // Playlist - add your music files here
   const playlist = [
     '/Christmas%20Spirit.mp3',
     '/Dark%20Christmas.mp3',
-    '/We%20Wish%20You.mp3'
+    '/We%20Wish%20You.mp3',
   ]
+  const initialTrackIndex = Math.floor(Math.random() * playlist.length)
+
+  const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
+  const [userCard, setUserCard] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  const songs = playlist
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(initialTrackIndex)
+  const [currentTrack, setCurrentTrack] = useState(() => playlist[initialTrackIndex])
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+
 
   // Set loading state only on client side to avoid hydration mismatch
   useEffect(() => {
@@ -69,11 +71,13 @@ export default function Home() {
             return pick
           })()
       setCurrentTrack(next)
+      const idx = playlist.indexOf(next)
+      if (idx >= 0) setCurrentTrackIndex(idx)
     }
 
     audio.addEventListener('ended', handleEnded)
     return () => audio.removeEventListener('ended', handleEnded)
-  }, [currentTrack, songs])
+  }, [currentTrack, songs, playlist])
 
   const handleMusicButton = () => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
@@ -83,7 +87,9 @@ export default function Home() {
     if (!hasInteracted) {
       setHasInteracted(true)
       // Play random track on first interaction
-      const nextTrack = songs[Math.floor(Math.random() * songs.length)]
+      const nextIndex = Math.floor(Math.random() * playlist.length)
+      const nextTrack = playlist[nextIndex]
+      setCurrentTrackIndex(nextIndex)
       setCurrentTrack(nextTrack)
       return
     }
@@ -107,6 +113,7 @@ export default function Home() {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
     const newIndex = currentTrackIndex === 0 ? playlist.length - 1 : currentTrackIndex - 1
     setCurrentTrackIndex(newIndex)
+    setCurrentTrack(playlist[newIndex])
     if (audio) {
       audio.src = playlist[newIndex]
       if (isMusicPlaying) audio.play()
@@ -117,6 +124,7 @@ export default function Home() {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
     const newIndex = currentTrackIndex === playlist.length - 1 ? 0 : currentTrackIndex + 1
     setCurrentTrackIndex(newIndex)
+    setCurrentTrack(playlist[newIndex])
     if (audio) {
       audio.src = playlist[newIndex]
       if (isMusicPlaying) audio.play()
@@ -132,6 +140,19 @@ export default function Home() {
       {/* Three.js Background - Santa's Van Scene */}
       <div className="fixed inset-0 z-0">
         <SantaVanScene />
+      </div>
+
+      {/* Music Player - Top Right */}
+      <div className="fixed top-4 right-4 z-50 flex flex-col items-end">
+        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-full px-3 py-2">
+          <button
+            onClick={handleMusicButton}
+            className="h-12 w-12 rounded-full bg-black/40 hover:bg-black/60 border border-white/10 text-white flex items-center justify-center shadow-xl transition-all hover:scale-110"
+            aria-label="Play or pause music"
+          >
+            {isMusicPlaying ? '🎅' : '🎅'}
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -222,43 +243,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Music Controls - Bottom Center */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-2 sm:gap-3 bg-black/40 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-full border border-christmas-gold/30 shadow-2xl">
-        {/* Previous Track - Tree Icon */}
-        <button
-          onClick={previousTrack}
-          className="text-lg sm:text-xl md:text-2xl hover:scale-110 transition-transform"
-          aria-label="Previous track"
-          title="Previous track"
-          style={{ transform: 'rotate(0deg)' }}
-        >
-          <span className="inline-block" style={{ transform: 'rotate(270deg)' }}>🌲</span>
-        </button>
-
-        {/* Play/Pause - Santa Icon */}
-        <button
-          onClick={handleMusicButton}
-          className="bg-christmas-red hover:bg-red-700 text-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all hover:scale-110"
-          aria-label="Play music"
-        >
-          {isMusicPlaying ? (
-            <div className="text-xl sm:text-2xl">🎅</div>
-          ) : (
-            <div className="text-xl sm:text-2xl opacity-50">🎅</div>
-          )}
-        </button>
-
-        {/* Next Track - Tree Icon */}
-        <button
-          onClick={nextTrack}
-          className="text-lg sm:text-xl md:text-2xl hover:scale-110 transition-transform"
-          aria-label="Next track"
-          title="Next track"
-          style={{ transform: 'rotate(0deg)' }}
-        >
-          <span className="inline-block" style={{ transform: 'rotate(90deg)' }}>🎄</span>
-        </button>
-      </div>
     </main>
   )
 }
