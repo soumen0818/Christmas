@@ -7,6 +7,7 @@ import CardGenerator from '@/components/CardGenerator'
 import CustomCardGenerator from '@/components/CustomCardGenerator'
 import SantaChat from '@/components/SantaChat'
 import GalleryView from '@/components/GalleryView'
+import TicTacToeSanta from '@/components/TicTacToeSanta'
 
 export default function Home() {
   // Playlist - add your music files here
@@ -17,7 +18,7 @@ export default function Home() {
   ]
   const initialTrackIndex = Math.floor(Math.random() * playlist.length)
 
-  const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
+  const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery' | 'tictactoe'>('home')
   const [userCard, setUserCard] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
@@ -171,7 +172,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 max-w-6xl w-full px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5 md:gap-6 max-w-6xl w-full px-4">
               <button
                 onClick={() => setCurrentView('generator')}
                 className="bg-blue-900/30 hover:bg-blue-800/40 backdrop-blur-sm text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-blue-400/50"
@@ -206,6 +207,15 @@ export default function Home() {
                 <div className="text-4xl sm:text-5xl mb-3 md:mb-4">🖼️</div>
                 My Cards
                 <p className="text-xs sm:text-sm font-sans mt-2 opacity-90">View your collection</p>
+              </button>
+
+              <button
+                onClick={() => setCurrentView('tictactoe')}
+                className="bg-amber-900/30 hover:bg-amber-800/40 backdrop-blur-sm text-white p-5 sm:p-6 md:p-8 rounded-xl md:rounded-2xl card-glow transition-all duration-300 hover:scale-105 font-christmas text-lg sm:text-xl md:text-2xl border border-amber-400/50"
+              >
+                <div className="text-4xl sm:text-5xl mb-3 md:mb-4">❄️🎅</div>
+                Santa Special Game
+                <p className="text-xs sm:text-sm font-sans mt-2 opacity-90">Play with Santa </p>
               </button>
             </div>
 
@@ -246,6 +256,10 @@ export default function Home() {
               setCurrentView('santa')
             }}
           />
+        )}
+
+        {currentView === 'tictactoe' && (
+          <TicTacToeSanta onBack={() => setCurrentView('home')} />
         )}
       </div>
 
