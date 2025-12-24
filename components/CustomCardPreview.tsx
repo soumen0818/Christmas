@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { ChristmasCard } from '@/utils/storage'
 import html2canvas from 'html2canvas'
 
@@ -11,6 +11,17 @@ interface CustomCardPreviewProps {
 
 export default function CustomCardPreview({ card, showActions = true }: CustomCardPreviewProps) {
     const cardRef = useRef<HTMLDivElement>(null)
+
+    // Play the specified song only while displaying this page
+    useEffect(() => {
+        const audio = document.getElementById('bg-music') as HTMLAudioElement | null
+        if (!audio) return
+        audio.src = '/spec/Love%20Story%20x%20Golden%20Brown.mp3'
+        audio.load()
+        audio.play().catch(() => {
+            // Autoplay may be blocked; user can tap the music button
+        })
+    }, [])
 
     const downloadCard = async () => {
         if (!cardRef.current) return

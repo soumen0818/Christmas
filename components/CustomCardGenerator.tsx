@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChristmasCard, cardStorage } from '@/utils/storage'
 import CustomCardPreview from './CustomCardPreview'
 
@@ -15,6 +15,61 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
     const [imagePreview, setImagePreview] = useState<string>('')
     const [showPreview, setShowPreview] = useState(false)
     const [currentCard, setCurrentCard] = useState<ChristmasCard | null>(null)
+
+    // Precompute decorative particles once to avoid reflow churn while typing
+    const snowLayer = useMemo(
+        () =>
+            Array.from({ length: 15 }, (_, i) => ({
+                id: `snow-${i}`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                fontSize: `${Math.random() * 10 + 6}px`,
+                duration: `${Math.random() * 12 + 10}s`,
+                delay: `${Math.random() * 5}s`,
+            })),
+        []
+    )
+
+    const starLayer = useMemo(
+        () =>
+            Array.from({ length: 10 }, (_, i) => ({
+                id: `star-${i}`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 70}%`,
+                fontSize: `${Math.random() * 8 + 6}px`,
+                duration: `${Math.random() * 3 + 2}s`,
+                delay: `${Math.random() * 3}s`,
+                filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))',
+            })),
+        []
+    )
+
+    const innerSnowLayer = useMemo(
+        () =>
+            Array.from({ length: 10 }, (_, i) => ({
+                id: `inner-snow-${i}`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                fontSize: `${Math.random() * 10 + 6}px`,
+                duration: `${Math.random() * 12 + 10}s`,
+                delay: `${Math.random() * 5}s`,
+            })),
+        []
+    )
+
+    const innerStarLayer = useMemo(
+        () =>
+            Array.from({ length: 8 }, (_, i) => ({
+                id: `inner-star-${i}`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 70}%`,
+                fontSize: `${Math.random() * 8 + 6}px`,
+                duration: `${Math.random() * 3 + 2}s`,
+                delay: `${Math.random() * 3}s`,
+                filter: 'drop-shadow(0 0 4px rgba(255,215,0,0.8))',
+            })),
+        []
+    )
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -51,8 +106,11 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
             isCustom: true,
             specialNote: specialNote.trim() || undefined,
         }
-
-        cardStorage.saveCard(card)
+        try {
+            cardStorage.saveCard(card)
+        } catch (err) {
+            console.warn('Unable to persist card, continuing to preview', err)
+        }
         setCurrentCard(card)
         setShowPreview(true)
     }
@@ -92,16 +150,16 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
         <div className="relative min-h-screen p-4 md:p-8 flex items-center justify-center overflow-hidden">
             {/* Falling snow */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(15)].map((_, i) => (
+                {snowLayer.map((flake) => (
                     <div
-                        key={i}
+                        key={flake.id}
                         className="absolute text-white opacity-70"
                         style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            fontSize: `${Math.random() * 10 + 6}px`,
-                            animation: `snowfall ${Math.random() * 12 + 10}s linear infinite`,
-                            animationDelay: `${Math.random() * 5}s`,
+                            left: flake.left,
+                            top: flake.top,
+                            fontSize: flake.fontSize,
+                            animation: `snowfall ${flake.duration} linear infinite`,
+                            animationDelay: flake.delay,
                         }}
                     >
                         ❄
@@ -111,17 +169,17 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
 
             {/* Twinkling stars */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(10)].map((_, i) => (
+                {starLayer.map((star) => (
                     <div
-                        key={i}
+                        key={star.id}
                         className="absolute"
                         style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 70}%`,
-                            fontSize: `${Math.random() * 8 + 6}px`,
-                            animation: `sparkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))',
+                            left: star.left,
+                            top: star.top,
+                            fontSize: star.fontSize,
+                            animation: `sparkle ${star.duration} ease-in-out infinite`,
+                            animationDelay: star.delay,
+                            filter: star.filter,
                         }}
                     >
                         ✨
@@ -148,16 +206,16 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
 
                 {/* Snowflakes for this container */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(10)].map((_, i) => (
+                    {innerSnowLayer.map((flake) => (
                         <div
-                            key={i}
+                            key={flake.id}
                             className="absolute text-white opacity-60"
                             style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 100}%`,
-                                fontSize: `${Math.random() * 10 + 6}px`,
-                                animation: `snowfall ${Math.random() * 12 + 10}s linear infinite`,
-                                animationDelay: `${Math.random() * 5}s`,
+                                left: flake.left,
+                                top: flake.top,
+                                fontSize: flake.fontSize,
+                                animation: `snowfall ${flake.duration} linear infinite`,
+                                animationDelay: flake.delay,
                             }}
                         >
                             ❄
@@ -167,17 +225,17 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
 
                 {/* Stars for this container */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(8)].map((_, i) => (
+                    {innerStarLayer.map((star) => (
                         <div
-                            key={i}
+                            key={star.id}
                             className="absolute"
                             style={{
-                                left: `${Math.random() * 100}%`,
-                                top: `${Math.random() * 70}%`,
-                                fontSize: `${Math.random() * 8 + 6}px`,
-                                animation: `sparkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                                animationDelay: `${Math.random() * 3}s`,
-                                filter: 'drop-shadow(0 0 4px rgba(255,215,0,0.8))',
+                                left: star.left,
+                                top: star.top,
+                                fontSize: star.fontSize,
+                                animation: `sparkle ${star.duration} ease-in-out infinite`,
+                                animationDelay: star.delay,
+                                filter: star.filter,
                             }}
                         >
                             ✨
@@ -187,7 +245,8 @@ export default function CustomCardGenerator({ onBack }: CustomCardGeneratorProps
 
                 {/* Content with relative positioning */}
                 <div className="relative z-10">
-                    <button
+                        <button
+                            type="button"
                         onClick={onBack}
                         className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-all"
                     >
