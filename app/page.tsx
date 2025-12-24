@@ -12,7 +12,11 @@ export default function Home() {
   const [currentView, setCurrentView] = useState<'home' | 'generator' | 'custom' | 'santa' | 'gallery'>('home')
   const [userCard, setUserCard] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true)
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  const songs = ['/Christmas%20Spirit.mp3', '/Dark%20Christmas.mp3', '/We%20Wish%20You.mp3']
+  const [currentTrack, setCurrentTrack] = useState(() => songs[Math.floor(Math.random() * songs.length)])
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const [lastClickTs, setLastClickTs] = useState(0)
   const [isMounted, setIsMounted] = useState(false)
 
   // Set loading state only on client side to avoid hydration mismatch
@@ -23,34 +27,67 @@ export default function Home() {
 
   useEffect(() => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
-    if (audio && !isLoading) {
-      // Try to play the audio
-      const playPromise = audio.play()
+    if (!audio || isLoading || !hasInteracted) return
 
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            // Audio started playing successfully
-            setIsMusicPlaying(true)
-          })
-          .catch(() => {
-            // Auto-play was prevented, set to false so user can click to play
-            setIsMusicPlaying(false)
-          })
-      }
+    audio.src = currentTrack
+    audio.load()
+
+    const playPromise = audio.play()
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsMusicPlaying(true)
+        })
+        .catch(() => {
+          setIsMusicPlaying(false)
+        })
     }
-  }, [isLoading])
+  }, [currentTrack, hasInteracted, isLoading])
 
-  const toggleMusic = () => {
+  useEffect(() => {
     const audio = document.getElementById('bg-music') as HTMLAudioElement
-    if (audio) {
-      if (isMusicPlaying) {
-        audio.pause()
-      } else {
-        audio.play()
-      }
-      setIsMusicPlaying(!isMusicPlaying)
+    if (!audio) return
+
+    const handleEnded = () => {
+      const available = songs.length
+      if (available === 0) return
+      const next = songs.length === 1
+        ? songs[0]
+        : (() => {
+            let pick = songs[Math.floor(Math.random() * songs.length)]
+            while (pick === currentTrack && songs.length > 1) {
+              pick = songs[Math.floor(Math.random() * songs.length)]
+            }
+            return pick
+          })()
+      setCurrentTrack(next)
     }
+
+    audio.addEventListener('ended', handleEnded)
+    return () => audio.removeEventListener('ended', handleEnded)
+  }, [currentTrack, songs])
+
+  const handleMusicButton = () => {
+    const now = Date.now()
+    const audio = document.getElementById('bg-music') as HTMLAudioElement
+
+    // Double-click (fast) mutes
+    if (now - lastClickTs < 300) {
+      if (audio) {
+        audio.pause()
+      }
+      setIsMusicPlaying(false)
+      setLastClickTs(0)
+      return
+    }
+
+    setLastClickTs(now)
+
+    // Single click: start / switch track
+    const nextTrack = songs[Math.floor(Math.random() * songs.length)]
+    setHasInteracted(true)
+    setCurrentTrack(nextTrack)
   }
 
   // Show loading page only after component mounts (client-side only)
@@ -61,15 +98,13 @@ export default function Home() {
   return (
     <main className="relative w-full min-h-screen overflow-hidden christmas-bg">
       {/* Background Music */}
-      <audio id="bg-music" loop autoPlay>
-        <source src="/Dean_Martin.mp3" type="audio/mpeg" />
-      </audio>
+      <audio id="bg-music" />
 
       {/* Music Control Button */}
       <button
-        onClick={toggleMusic}
+        onClick={handleMusicButton}
         className="fixed top-4 right-4 z-50 bg-christmas-red hover:bg-red-700 text-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
-        aria-label="Toggle music"
+        aria-label="Play music"
       >
         {isMusicPlaying ? (
           <div className="text-2xl">🎶</div>
