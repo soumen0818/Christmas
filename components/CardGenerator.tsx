@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChristmasCard, cardStorage, messageGenerator } from '@/utils/storage'
 import CardPreview from './CardPreview'
 
@@ -15,6 +15,61 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
   const [imagePreview, setImagePreview] = useState<string>('')
   const [showPreview, setShowPreview] = useState(false)
   const [currentCard, setCurrentCard] = useState<ChristmasCard | null>(null)
+
+  // Precompute decorative particle positions once to avoid rerender cost while typing
+  const snowLayer = useMemo(
+    () =>
+      Array.from({ length: 15 }, (_, i) => ({
+        id: `snow-${i}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        fontSize: `${Math.random() * 10 + 6}px`,
+        duration: `${Math.random() * 12 + 10}s`,
+        delay: `${Math.random() * 5}s`,
+      })),
+    []
+  )
+
+  const starLayer = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: `star-${i}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 70}%`,
+        fontSize: `${Math.random() * 8 + 6}px`,
+        duration: `${Math.random() * 3 + 2}s`,
+        delay: `${Math.random() * 3}s`,
+        filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))',
+      })),
+    []
+  )
+
+  const innerSnowLayer = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: `inner-snow-${i}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        fontSize: `${Math.random() * 10 + 6}px`,
+        duration: `${Math.random() * 12 + 10}s`,
+        delay: `${Math.random() * 5}s`,
+      })),
+    []
+  )
+
+  const innerStarLayer = useMemo(
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        id: `inner-star-${i}`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 70}%`,
+        fontSize: `${Math.random() * 8 + 6}px`,
+        duration: `${Math.random() * 3 + 2}s`,
+        delay: `${Math.random() * 3}s`,
+        filter: 'drop-shadow(0 0 4px rgba(255,215,0,0.8))',
+      })),
+    []
+  )
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -99,16 +154,16 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
 
       {/* Falling snow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(15)].map((_, i) => (
+        {snowLayer.map((flake) => (
           <div
-            key={i}
+            key={flake.id}
             className="absolute text-white opacity-70"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              fontSize: `${Math.random() * 10 + 6}px`,
-              animation: `snowfall ${Math.random() * 12 + 10}s linear infinite`,
-              animationDelay: `${Math.random() * 5}s`,
+              left: flake.left,
+              top: flake.top,
+              fontSize: flake.fontSize,
+              animation: `snowfall ${flake.duration} linear infinite`,
+              animationDelay: flake.delay,
             }}
           >
             ❄
@@ -118,17 +173,17 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
 
       {/* Twinkling stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(10)].map((_, i) => (
+        {starLayer.map((star) => (
           <div
-            key={i}
+            key={star.id}
             className="absolute"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 70}%`,
-              fontSize: `${Math.random() * 8 + 6}px`,
-              animation: `sparkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 3}s`,
-              filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))',
+              left: star.left,
+              top: star.top,
+              fontSize: star.fontSize,
+              animation: `sparkle ${star.duration} ease-in-out infinite`,
+              animationDelay: star.delay,
+              filter: star.filter,
             }}
           >
             ✨
@@ -155,16 +210,16 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
 
         {/* Snowflakes for this container */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(10)].map((_, i) => (
+          {innerSnowLayer.map((flake) => (
             <div
-              key={i}
+              key={flake.id}
               className="absolute text-white opacity-60"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                fontSize: `${Math.random() * 10 + 6}px`,
-                animation: `snowfall ${Math.random() * 12 + 10}s linear infinite`,
-                animationDelay: `${Math.random() * 5}s`,
+                left: flake.left,
+                top: flake.top,
+                fontSize: flake.fontSize,
+                animation: `snowfall ${flake.duration} linear infinite`,
+                animationDelay: flake.delay,
               }}
             >
               ❄
@@ -174,17 +229,17 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
 
         {/* Stars for this container */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+          {innerStarLayer.map((star) => (
             <div
-              key={i}
+              key={star.id}
               className="absolute"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 70}%`,
-                fontSize: `${Math.random() * 8 + 6}px`,
-                animation: `sparkle ${Math.random() * 3 + 2}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 3}s`,
-                filter: 'drop-shadow(0 0 4px rgba(255,215,0,0.8))',
+                left: star.left,
+                top: star.top,
+                fontSize: star.fontSize,
+                animation: `sparkle ${star.duration} ease-in-out infinite`,
+                animationDelay: star.delay,
+                filter: star.filter,
               }}
             >
               ✨
@@ -203,7 +258,7 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
           </button>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-christmas text-christmas-gold text-center mb-6 md:mb-8 glow-text">
-            Create Your Magic Card ✨
+            Create Your Magical Card ✨
           </h2>
 
           <div className="space-y-4 md:space-y-6">
@@ -225,7 +280,7 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
             {/* Gender Selection */}
             <div>
               <label className="block text-base sm:text-lg font-semibold mb-2 text-white">
-                I am a... *
+                Select your Gender *
               </label>
               <div className="flex gap-2 sm:gap-4">
                 <button
@@ -255,7 +310,7 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
                     : 'bg-gray-100 border-gray-300 hover:bg-gray-200'
                     }`}
                 >
-                  <div className="text-2xl sm:text-3xl mb-1">🌟</div>
+                  <div className="text-2xl sm:text-3xl mb-1">🤫</div>
                   <div className="font-semibold text-xs sm:text-sm">Other</div>
                 </button>
               </div>
@@ -287,7 +342,7 @@ export default function CardGenerator({ onBack, onCardCreated }: CardGeneratorPr
                 </label>
               </div>
               <p className="text-xs sm:text-sm text-gray-300 mt-2">
-                A photo makes your card extra special!
+                A photo makes your card extra special! ( We are not storing your image anywhere )
               </p>
             </div>
 
