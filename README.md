@@ -10,9 +10,18 @@ A magical Next.js application that lets users create personalized Christmas card
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
 ![Three.js](https://img.shields.io/badge/Three.js-3D-blue?style=for-the-badge&logo=three.js)
 
+## 🎄 Recent Updates (December 2025)
+
+- ✨ Enhanced UI/UX with improved animations
+- 🎮 Tic-Tac-Toe game component added (Santa edition coming soon!)
+- 🚀 Performance optimizations for faster loading
+- 📱 Improved mobile responsiveness
+- 🎵 Music player with festive controls
+
 ## ✨ Features
 
 ### 🎁 Card Creation
+
 - **Personalized Messages**: Sweet, customized messages based on gender (extra sweet for girls!)
 - **Photo Upload**: Add your photo to make the card extra special
 - **Custom Card Mode**: Write your own heartfelt message to loved ones
@@ -20,6 +29,7 @@ A magical Next.js application that lets users create personalized Christmas card
 - **Beautiful Design**: Festive Christmas-themed cards with animations
 
 ### 🎅 Santa's Workshop
+
 - **Claim Your Gift**: Tell Santa what you wish for Christmas
 - **Funny Messages**: Receive one of 6 hilarious personalized messages from Santa
   - Kevin the clumsy elf wrapping himself in ribbon
@@ -32,19 +42,22 @@ A magical Next.js application that lets users create personalized Christmas card
 - **Personalization**: Messages use your name, wish, and gender-appropriate pronouns
 
 ### 🎄 Gallery & Storage
+
 - **Local Storage**: All data saved locally - no database needed!
 - **Card Gallery**: View all your created cards in one place
-- **Gift Status Indicators**: 
+- **Gift Status Indicators**:
   - "✅ Gift Received" badge for cards with claimed gifts
   - 🎁 icon overlay on card thumbnails
 - **Gift History**: Track all gifts received from Santa
 
 ### 📤 Share & Download
+
 - **Download as Image**: Save your card as a high-quality PNG
 - **Share Functionality**: Share your card on social media or with friends
 - **Mobile Friendly**: Works perfectly on all devices
 
 ### 🌟 Magical 3D Experience
+
 - **Three.js Background**: Animated 3D Christmas scene with Santa's van
 - **Falling Snow**: Beautiful particle effects
 - **3D Christmas Tree**: Interactive decorations
@@ -55,28 +68,32 @@ A magical Next.js application that lets users create personalized Christmas card
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ installed
 - npm or yarn package manager
 
 ### Installation
 
 1. **Navigate to the project directory**
+
 ```bash
 cd c:\Users\dasso\OneDrive\Desktop\christmas
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Run the development server**
+
 ```bash
 npm run dev
 ```
 
 4. **Open your browser**
-Navigate to [http://localhost:3000](http://localhost:3000)
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🎨 Project Structure
 
@@ -96,20 +113,39 @@ christmas/
 │   ├── SantaChat.tsx         # Santa gift claiming with funny messages
 │   ├── SantaVanScene.tsx     # 3D Santa van scene
 │   ├── LoadingPage.tsx       # Loading screen with Santa
-│   └── TicTacToeSanta.tsx    # Tic-tac-toe game (in development)
+│   └── TicTacToeSanta.tsx    # Tic-tac-toe game with Santa theme
 ├── utils/
 │   ├── storage.ts            # Local storage & message generation
 │   └── gemini.ts             # Utility file
 ├── public/
+│   ├── spec/                 # Specifications folder
 │   ├── santa_image.png       # Default card image
 │   ├── santa_loading.gif     # Loading animation
 │   ├── christmas_tree.jpg    # Background image
 │   └── Dean_Martin.mp3       # Christmas music
+├── next-env.d.ts            # Next.js TypeScript definitions
+├── next.config.js           # Next.js configuration
+├── tsconfig.json            # TypeScript configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+├── postcss.config.js        # PostCSS configuration
+├── package.json             # Project dependencies
+├── vercel.json              # Vercel deployment configuration
+└── README.md                # This file
+```
+
+│ ├── storage.ts # Local storage & message generation
+│ └── gemini.ts # Utility file
+├── public/
+│ ├── santa_image.png # Default card image
+│ ├── santa_loading.gif # Loading animation
+│ ├── christmas_tree.jpg # Background image
+│ └── Dean_Martin.mp3 # Christmas music
 ├── package.json
 ├── tsconfig.json
 ├── tailwind.config.js
 └── next.config.js
-```
+
+````
 
 ## 🎯 How to Use
 
@@ -175,11 +211,12 @@ christmas: {
   gold: '#FFD700',
   silver: '#C0C0C0',
 }
-```
+````
 
 ## 🌟 Cool Features & Ideas
 
 ### Implemented Extras
+
 ✅ **3D Christmas Scene** - Santa's van, falling snow, floating gifts
 ✅ **Personalized Messages** - Gender-specific sweet messages
 ✅ **Funny Santa Gifts** - 6 hilarious hardcoded templates with randomization
@@ -191,9 +228,11 @@ christmas: {
 ✅ **Custom Cards** - Write your own messages
 ✅ **Default Images** - Santa image if no photo uploaded
 ✅ **Music Player** - Christmas music with festive controls (🌲🎅🎄)
+✅ **Tic-Tac-Toe Game** - Santa-themed game component
 
 ### Future Enhancement Ideas
-- 🎮 Complete Tic-Tac-Toe game with Santa
+
+- 🎮 Complete Tic-Tac-Toe game multiplayer functionality
 - 🎨 Multiple card templates/themes
 - 🌍 Multi-language support
 - 📧 Email card functionality
@@ -241,7 +280,34 @@ christmas: {
 6. **Claim gifts** from Santa to see the celebration animation
 7. **Use custom cards** for heartfelt personal messages
 
-## 📝 License
+## � Troubleshooting
+
+### Cards not saving?
+
+- Check if browser local storage is enabled
+- Try clearing cache and reloading the page
+- Ensure you have storage space available
+
+### 3D scene not rendering?
+
+- Update your browser to the latest version
+- Try a different browser (Chrome recommended)
+- Check that JavaScript is enabled
+- Disable browser extensions that might interfere with WebGL
+
+### Music not playing?
+
+- Check your browser's audio settings
+- Ensure autoplay is not blocked
+- Try clicking the music player controls manually
+
+### Photo upload issues?
+
+- Ensure file size is under 5MB
+- Use common formats (JPG, PNG, WebP)
+- Check browser permissions for camera/file access
+
+## �📝 License
 
 This project is open source and available for personal use.
 
@@ -250,6 +316,7 @@ This project is open source and available for personal use.
 Created with ❤️ and Christmas magic!
 
 Special thanks to:
+
 - Santa Claus for inspiration 🎅
 - Elves in the North Pole 🧝
 - Everyone who believes in Christmas magic ✨
